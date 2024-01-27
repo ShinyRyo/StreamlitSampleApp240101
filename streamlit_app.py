@@ -7,26 +7,39 @@ from google.cloud import bigquery
 import datetime
 from dotenv import load_dotenv
 
-# .envファイルから環境変数を読み込む（ローカル開発の場合）
-load_dotenv()
+# # .envファイルから環境変数を読み込む（ローカル開発の場合）
+# load_dotenv()
 
-# 環境変数からBigQueryの設定とAPIキー、カスタム検索エンジンIDを取得
-project_id = os.getenv('BIGQUERY_PROJECT_ID')
-dataset_name = os.getenv('BIGQUERY_DATASET_NAME')
-table_name = os.getenv('BIGQUERY_TABLE_NAME')
-api_key = os.getenv('GOOGLE_API_KEY')
-cse_id = os.getenv('GOOGLE_CSE_ID')
+# # 環境変数からBigQueryの設定とAPIキー、カスタム検索エンジンIDを取得
+# project_id = os.getenv('BIGQUERY_PROJECT_ID')
+# dataset_name = os.getenv('BIGQUERY_DATASET_NAME')
+# table_name = os.getenv('BIGQUERY_TABLE_NAME')
+# api_key = os.getenv('GOOGLE_API_KEY')
+# cse_id = os.getenv('GOOGLE_CSE_ID')
 
-# JSONキーファイルのパスを指定
-service_account_file_path = './bigqueryry0-8a061de05cf8.json'
+# # JSONキーファイルのパスを指定
+# service_account_file_path = './bigqueryry0-8a061de05cf8.json'
 
-# ファイルからサービスアカウントキーを読み込む
-with open(service_account_file_path) as f:
-    service_account_info = json.load(f)
-credentials = service_account.Credentials.from_service_account_info(service_account_info)
+# # ファイルからサービスアカウントキーを読み込む
+# with open(service_account_file_path) as f:
+#     service_account_info = json.load(f)
+# credentials = service_account.Credentials.from_service_account_info(service_account_info)
+
+# # BigQueryクライアントを初期化
+# client = bigquery.Client(credentials=credentials, project=credentials.project_id)
+
+# StreamlitのSecretsから設定を読み込む
+project_id = st.secrets['BIGQUERY_PROJECT_ID']
+dataset_name = st.secrets['BIGQUERY_DATASET_NAME']
+table_name = st.secrets['BIGQUERY_TABLE_NAME']
+api_key = st.secrets['GOOGLE_API_KEY']
+cse_id = st.secrets['GOOGLE_CSE_ID']
+
+# StreamlitのSecretsからサービスアカウントキーを読み込む
+credentials = service_account.Credentials.from_service_account_info(st.secrets['google_service_account'])
 
 # BigQueryクライアントを初期化
-client = bigquery.Client(credentials=credentials, project=credentials.project_id)
+client = bigquery.Client(credentials=credentials, project=project_id)
 
 # 検索用の関数
 def google_search(query, api_key, cse_id, **kwargs):
